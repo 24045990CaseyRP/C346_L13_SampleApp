@@ -1,11 +1,17 @@
 import React, {useState} from 'react';
 import {StatusBar, View, Button, Text, TextInput} from 'react-native';
 import {Picker} from '@react-native-picker/picker';
-import {datasource} from './Data';
+import asyncStorage from '@react-native-async-storage/async-storage';
 
-const Add = ({navigation}) => {
+
+const Add = ({navigation, route}) => {
     const [letter, setLetter] = useState("");
     const [type, setType] = useState("Vowels");
+
+    const setData = async(value) => {
+        asyncStorage.setItem("alphadata", value);
+        navigation.navigate('Home');
+    }
 
     return (
         <View>
@@ -18,13 +24,15 @@ const Add = ({navigation}) => {
             </Picker>
             <Button title='Submit'
                     onPress={() => {
+                        let mydata = JSON.parse(route.params.datastring);
                         let item = {key: letter};
                         let indexnum = 1;
                         if (type == "Vowels") {
                             indexnum = 0;
                         }
-                        datasource[indexnum].data.push(item);
-                        navigation.navigate("Home")
+                        mydata[indexnum].data.push(item);
+                        let stringdata = JSON.stringify(mydata);
+                        setData(stringdata);
                     }
                     }
             />
